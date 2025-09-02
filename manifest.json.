@@ -1,6 +1,6 @@
 {
   "name": "PNEUMOweb",
-  "short_name": "PNEUMO",
+  "short_name": "PNEUMOweb",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
