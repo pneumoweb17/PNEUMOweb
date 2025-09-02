@@ -28,6 +28,7 @@
       "src": "screenshot2.png",
       "sizes": "1280x720",
       "type": "image/png"
+      "form_factor": "wide"
     }
   ]
 }
