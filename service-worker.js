@@ -8,19 +8,21 @@ const urlsToCache = [
   "/style.css",
   "/pages.css",
   "/result.css",
-  "/screening.css"
-  "/manifest.json"
-  "/icon-192.png"
-  "/icon-512.png"
-  "/logo.png"
-  "/background.png"
+  "/screening.css",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/logo.png",
+  "/background.png",
   "/background2.png"
 ];
 
 // Install and cache files
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
   );
 });
 
