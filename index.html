@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PNEUMOweb - Web-based pneumonia screening system</title>
-
-    <!-- PWA manifest -->
+  <!-- PWA manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
     <meta name="description" content="PNEUMOweb - Web-based pneumonia screening system for assessing pneumonia risk factors and symptoms.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,7 +34,7 @@
         <section class="title-section">
             <div class="logo-container">
                 <div class="logo-placeholder">
-                    <img src="logo.png" alt="PNEUMOweb Logo" class="logo-img">
+                  <img src="logo.png" alt="PNEUMOweb Logo" class="logo-img">   
                 </div>
             </div>
             <div class="title-content">
@@ -50,48 +47,69 @@
         <section class="body-section">
             <div class="carousel-container">
                 <div class="carousel-slide active" data-index="0">
-                    <div class="slide-content"><p></p></div>
+                    <div class="slide-content">
+                        <p>Welcome to PNEUMOweb - A comprehensive pneumonia screening system designed to help assess your risk factors and symptoms.</p>
+                    </div>
                 </div>
                 <div class="carousel-slide" data-index="1">
-                    <div class="slide-content"><p></p></div>
+                    <div class="slide-content">
+                        <p>Our screening process consists of 19 carefully designed questions covering basic information, symptoms, and risk factors to provide accurate assessment.</p>
+                    </div>
                 </div>
+
                 <div class="carousel-slide" data-index="2">
-                    <div class="slide-content"><p></p></div>
+                    <div class="slide-content">
+                        <p>Get instant results with risk level assessment (Low, Moderate, or High) and personalized recommendations based on your responses.</p>
+                    </div>
                 </div>
                 <div class="carousel-slide" data-index="3">
-                    <div class="slide-content"><p></p></div>
+                    <div class="slide-content">
+                        <p>Your privacy is important to us. All screening data is processed locally and can be saved securely to your device.</p>
+                    </div>
                 </div>
                 <div class="carousel-slide" data-index="4">
-                    <div class="slide-content"><p></p></div>
+                    <div class="slide-content">
+                        <p>Remember: This tool is for screening purposes only. Always consult with a healthcare professional for proper medical diagnosis and treatment.</p>
+                    </div>
                 </div>
             </div>
             <button class="start-screening-btn" onclick="window.location.href='screening.html'">
                 START SCREENING
             </button>
+            <!-- Background image placeholder -->
         </section>
 
         <!-- Footer Section -->
         <footer class="footer">
             <div class="disclaimer-box">
                 <strong>Disclaimer:</strong>
-                This screening tool is for informational purposes only and does not replace professional medical advice. Please consult a healthcare professional for proper diagnosis and treatment.
+                    This screening tool is for informational purposes only and does not replace professional medical advice. Please consult a healthcare professional for proper diagnosis and treatment.
+            </div>
+            <!-- Footer background image placeholder -->
+            <div class="footer-background-placeholder">
+                <!-- Footer background image will be placed here -->
             </div>
         </footer>
     </div>
-
     <div id="split-transition" class="split-transition-overlay" style="display: none;">
         <div class="split-left"></div>
         <div class="split-right"></div>
     </div>
 
     <script>
-        const slides = document.querySelectorAll('.carousel-slide');
-        const totalSlides = slides.length;
         let currentSlide = 0;
         let slideInterval;
         let isHovered = false;
         let isRotating = true;
         let isTransitioning = false;
+
+        const slides = document.querySelectorAll('.carousel-slide');
+        const totalSlides = slides.length;
+
+        // Debug function to track state
+        function logState(action) {
+            console.log(`[${action}] currentSlide: ${currentSlide}, isRotating: ${isRotating}, isTransitioning: ${isTransitioning}, isHovered: ${isHovered}`);
+        }
 
         const translations = {
             en: {
@@ -109,7 +127,7 @@
                 disclaimer: "This screening tool is for informational purposes only and does not replace professional medical advice. Please consult a healthcare professional for proper diagnosis and treatment."
             },
             fil: {
-                nav: ["Bahay", "Background", "Mga Tanong", "Feedback"],
+                nav: ["Home", "Background", "Mga Tanong", "Feedback"],
                 mainTitle: "PNEUMOweb",
                 subtitle: "Web-based na sistema para sa pagsusuri ng pulmonya",
                 carousel: [
@@ -124,49 +142,65 @@
             }
         };
 
-        function translatePage(lang) {
-            // Update nav links
-            document.querySelectorAll('.nav-link').forEach((link, i) => {
-                link.textContent = translations[lang].nav[i];
-            });
-
-            // Update main title and subtitle
+        function translateIndexPage(lang) {
+            // Main title only
             document.querySelector('.main-title').textContent = translations[lang].mainTitle;
-            document.querySelector('.subtitle').textContent = translations[lang].subtitle;
 
-            // Update carousel
-            const slideParagraphs = document.querySelectorAll('.carousel-slide .slide-content p');
+            // Carousel slides
+            const slides = document.querySelectorAll('.carousel-slide .slide-content p');
             translations[lang].carousel.forEach((text, i) => {
-                if (slideParagraphs[i]) slideParagraphs[i].textContent = text;
+                if (slides[i]) slides[i].textContent = text;
             });
 
-            // Update button
+            // Start button
             document.querySelector('.start-screening-btn').textContent = translations[lang].startBtn;
 
-            // Update disclaimer
+            // Disclaimer
             document.querySelector('.disclaimer-box').innerHTML = `<strong>${lang === "en" ? "Disclaimer:" : "Paunawa:"}</strong> ${translations[lang].disclaimer}`;
         }
-
+        
         function updateSlidePositions() {
             slides.forEach((slide, index) => {
+                // Clear all position classes first
                 slide.classList.remove('center', 'left-1', 'left-2', 'right-1', 'right-2');
+
+                // Calculate relative position from current center
                 let position = (index - currentSlide + totalSlides) % totalSlides;
+
+                // Apply position classes based on relative position
                 switch(position) {
-                    case 0: slide.classList.add('center'); break;
-                    case 1: slide.classList.add('right-1'); break;
-                    case 2: slide.classList.add('right-2'); break;
-                    case 3: slide.classList.add('left-2'); break;
-                    case 4: slide.classList.add('left-1'); break;
+                    case 0:
+                        slide.classList.add('center');
+                        break;
+                    case 1:
+                        slide.classList.add('right-1');
+                        break;
+                    case 2:
+                        slide.classList.add('right-2');
+                        break;
+                    case 3:
+                        slide.classList.add('left-2');
+                        break;
+                    case 4:
+                        slide.classList.add('left-1');
+                        break;
                 }
             });
         }
 
         function nextSlide() {
             if (!isRotating || isTransitioning) return;
+
             isTransitioning = true;
             currentSlide = (currentSlide + 1) % totalSlides;
             updateSlidePositions();
-            setTimeout(() => isTransitioning = false, 700);
+            logState('nextSlide');
+
+            // Allow transitions to complete
+            setTimeout(() => {
+                isTransitioning = false;
+                logState('nextSlide-complete');
+            }, 700);
         }
 
         function startRotation() {
@@ -180,43 +214,92 @@
 
         function moveToCenter(targetIndex) {
             if (isTransitioning || targetIndex === currentSlide) return;
+
+            console.log('Moving slide', targetIndex, 'to center');
             isTransitioning = true;
             stopRotation();
             isRotating = false;
+
             currentSlide = targetIndex;
             updateSlidePositions();
-            setTimeout(() => { isTransitioning = false; }, 700);
-            setTimeout(() => { if (!isHovered) { isRotating = true; startRotation(); } }, 5000);
+            logState('moveToCenter');
+
+            // Reset transition state after animation completes (shorter delay)
+            setTimeout(() => {
+                isTransitioning = false;
+                logState('moveToCenter-transitionComplete');
+                console.log('Transition complete, ready for new interactions');
+            }, 700);
+
+            // Resume auto-rotation after 5 seconds (only if not being hovered)
+            setTimeout(() => {
+                if (!isHovered && !isTransitioning) {
+                    isRotating = true;
+                    startRotation();
+                    logState('moveToCenter-autoRotationResumed');
+                    console.log('Auto-rotation resumed');
+                }
+            }, 5000);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            translatePage(document.getElementById('languageSelect').value);
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            translateIndexPage(document.getElementById('languageSelect').value);
             updateSlidePositions();
             startRotation();
 
+            // Add event listeners
             slides.forEach((slide, index) => {
+                // Hover effects for center slide only
                 slide.addEventListener('mouseenter', () => {
-                    if (slide.classList.contains('center')) { isHovered = true; stopRotation(); }
+                    if (slide.classList.contains('center') && !isTransitioning) {
+                        isHovered = true;
+                        stopRotation();
+                    }
                 });
+
                 slide.addEventListener('mouseleave', () => {
-                    if (slide.classList.contains('center')) { isHovered = false; if (isRotating) startRotation(); }
+                    if (slide.classList.contains('center') && !isTransitioning) {
+                        isHovered = false;
+                        // Only restart if auto-rotation is enabled and not manually paused
+                        if (isRotating && !isTransitioning) {
+                            startRotation();
+                        }
+                    }
                 });
-                slide.addEventListener('click', () => { moveToCenter(index); });
+
+                // Click to move to center
+                slide.addEventListener('click', () => {
+                    console.log('Slide clicked:', index, 'isCenter:', slide.classList.contains('center'), 'isTransitioning:', isTransitioning, 'currentSlide:', currentSlide);
+
+                    if (!slide.classList.contains('center') && !isTransitioning) {
+                        moveToCenter(index);
+                    } else if (isTransitioning) {
+                        console.log('Click ignored - transition in progress');
+                    } else if (slide.classList.contains('center')) {
+                        console.log('Click ignored - slide is already center');
+                    }
+                });
             });
 
+            // Language toggle functionality
             document.getElementById('languageSelect').addEventListener('change', function() {
-                translatePage(this.value);
+                const selectedLang = this.value;
+                translateIndexPage(selectedLang);
             });
         });
 
-        window.addEventListener('resize', () => { if (!isTransitioning) setTimeout(updateSlidePositions, 100); });
-
+        // Prevent issues on window resize
+        window.addEventListener('resize', () => {
+            if (!isTransitioning) {
+                setTimeout(updateSlidePositions, 100);
+            }
+        });
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./service-worker.js')
             .then(() => console.log("Service Worker registered"))
             .catch((error) => console.log("Service Worker failed:", error));
-        }
+}
     </script>
 </body>
 </html>
-
