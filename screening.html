@@ -313,6 +313,15 @@
                 optionsContainer.appendChild(input);
             }
 
+            if (question.key === "cough_duration" && (answers.cough === "No" || answers.cough === "Hindi")) {
+                answers.cough_duration = "Skipped";
+                const optionsContainer = document.getElementById('answer-options');
+                optionsContainer.innerHTML = '<span style="color:gray;">Skipped</span>';
+                updateNavigationButtons();
+                updateSubmitButton();
+                return;
+            }
+
             // Highlight current answer if exists
             highlightCurrentAnswer();
 
@@ -448,61 +457,68 @@
             const summaryContainer = document.getElementById('summary-questions');
             summaryContainer.innerHTML = '';
 
-            questions.forEach((question, index) => {
-                let answer = answers[question.key];
+// ...inside showSummary()...
+questions.forEach((question, index) => {
+    let answer = answers[question.key];
 
-                // Translate answer for yesno/choice
-                if (question.type === 'yesno' || question.type === 'choice') {
-                    const enOptions = translations.en.questions[index].options || [];
-                    const filOptions = translations.fil.questions[index].options || [];
-                    if (currentLanguage === 'fil') {
-                        // English to Filipino
-                        const idx = enOptions.indexOf(answer);
-                        if (idx !== -1) answer = filOptions[idx];
-                        if (answer === "Yes") answer = "Oo";
-                        if (answer === "No") answer = "Hindi";
-                    } else {
-                        // Filipino to English
-                        const idx = filOptions.indexOf(answer);
-                        if (idx !== -1) answer = enOptions[idx];
-                        if (answer === "Oo") answer = "Yes";
-                        if (answer === "Hindi") answer = "No";
-                    }
-                }
+    // Translate answer for yesno/choice
+    if (question.type === 'yesno' || question.type === 'choice') {
+        const enOptions = translations.en.questions[index].options || [];
+        const filOptions = translations.fil.questions[index].options || [];
+        if (currentLanguage === 'fil') {
+            const idx = enOptions.indexOf(answer);
+            if (idx !== -1) answer = filOptions[idx];
+            if (answer === "Yes") answer = "Oo";
+            if (answer === "No") answer = "Hindi";
+        } else {
+            const idx = filOptions.indexOf(answer);
+            if (idx !== -1) answer = enOptions[idx];
+            if (answer === "Oo") answer = "Yes";
+            if (answer === "Hindi") answer = "No";
+        }
+    }
 
-                const summaryItem = document.createElement('div');
-                summaryItem.className = 'summary-item';
+    const summaryItem = document.createElement('div');
+    summaryItem.className = 'summary-item';
 
-                // Render input or select depending on type
-                let answerInput = '';
-                if (question.type === 'number') {
-                    answerInput = `<input type="number" value="${answers[question.key]}" min="0" max="${question.key === 'age' ? 120 : ''}" onchange="updateAnswer('${question.key}', this.value)">`;
-                } else if (question.type === 'yesno') {
-                    const yesLabel = translations[currentLanguage].questions[index].options[0] || 'Yes';
-                    const noLabel = translations[currentLanguage].questions[index].options[1] || 'No';
-                    answerInput = `
-                        <select onchange="updateAnswer('${question.key}', this.value)">
-                            <option value="${yesLabel}" ${answer === yesLabel ? 'selected' : ''}>${yesLabel}</option>
-                            <option value="${noLabel}" ${answer === noLabel ? 'selected' : ''}>${noLabel}</option>
-                        </select>
-                    `;
-                } else if (question.type === 'choice') {
-                    answerInput = `
-                        <select onchange="updateAnswer('${question.key}', this.value)">
-                            ${question.options.map(opt => `<option value="${opt}" ${answer === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                        </select>
-                    `;
-                }
+    let answerInput = '';
+    if (question.type === 'number') {
+        answerInput = `<input type="number" value="${answers[question.key]}" min="0" max="${question.key === 'age' ? 120 : ''}" onchange="updateAnswer('${question.key}', this.value)">`;
+    } else if (question.type === 'yesno') {
+        const yesLabel = translations[currentLanguage].questions[index].options[0] || 'Yes';
+        const noLabel = translations[currentLanguage].questions[index].options[1] || 'No';
+        answerInput = `
+            <select onchange="updateAnswer('${question.key}', this.value)">
+                <option value="${yesLabel}" ${answer === yesLabel ? 'selected' : ''}>${yesLabel}</option>
+                <option value="${noLabel}" ${answer === noLabel ? 'selected' : ''}>${noLabel}</option>
+            </select>
+        `;
+    } else if (question.type === 'choice') {
+        // For question 5, add "Skipped" as an option if cough is No/Hindi
+        if (question.key === "cough_duration" && (answers.cough === "No" || answers.cough === "Hindi")) {
+            let options = [...question.options, "Skipped"];
+            answerInput = `
+                <select onchange="updateAnswer('${question.key}', this.value)">
+                    ${options.map(opt => `<option value="${opt}" ${answer === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                </select>
+            `;
+        } else {
+            answerInput = `
+                <select onchange="updateAnswer('${question.key}', this.value)">
+                    ${question.options.map(opt => `<option value="${opt}" ${answer === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                </select>
+            `;
+        }
+    }
 
-                summaryItem.innerHTML = `
-                    <div class="summary-question">${question.question}</div>
-                    <div class="summary-answer">
-                        ${answerInput}
-                    </div>
-                `;
-                summaryContainer.appendChild(summaryItem);
-            });
-        }        function updateAnswer(key, value) {
+    summaryItem.innerHTML = `
+        <div class="summary-question">${question.question}</div>
+        <div class="summary-answer">
+            ${answerInput}
+        </div>
+    `;
+    summaryContainer.appendChild(summaryItem);
+});        }        function updateAnswer(key, value) {
             answers[key] = value;
         }
 
