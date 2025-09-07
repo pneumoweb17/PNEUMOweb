@@ -1,7 +1,7 @@
 {
   "name": "PNEUMOweb Screening App",
   "short_name": "PNEUMOweb",
-  "start_url": "index.html",
+  "start_url": "/PNEUMOweb/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
